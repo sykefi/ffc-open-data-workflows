@@ -8,6 +8,7 @@ localrules:
     extract_grid_param_xyz,
     extract_grid_date_xyz,
     extract_developmentclass_xyz,
+    rasterize_xyz,
 
 
 rule download_grid_region:
@@ -43,6 +44,8 @@ rule extract_grid_param_xyz:
         rules.unpack_grid_region.output[0],
     output:
         temp("results/gridcell/{year}-{month}-{day}/{gridcell_field}/{region}.xyz"),
+    group:
+        "gridparam"
     wildcard_constraints:
         gridcell_field=regex_choice_list(
             [
@@ -90,6 +93,8 @@ rule extract_grid_date_xyz:
         rules.unpack_grid_region.output[0],
     output:
         temp("results/gridcell/{year}-{month}-{day}/{gridcell_field}/{region}.xyz"),
+    group:
+        "gridparam"
     wildcard_constraints:
         gridcell_field=regex_choice_list(
             ["growthplacedate", "treedatadate", "creationtime", "updatetime"]
@@ -120,6 +125,8 @@ rule extract_developmentclass_xyz:
         rules.unpack_grid_region.output[0],
     output:
         temp("results/gridcell/{year}-{month}-{day}/developmentclass/{region}.xyz"),
+    group:
+        "gridparam"
     params:
         sql=lambda w: (
             "SELECT"
@@ -152,3 +159,20 @@ rule extract_developmentclass_xyz:
         " {input[0]:q}"
         " -sql {params.sql:q} >"
         " {output[0]:q}"
+
+
+rule rasterize_xyz:
+    input:
+        rules.extract_grid_param_xyz.output[0],
+    output:
+        temp(rules.extract_grid_param_xyz.output[0].replace(".xyz", ".tif")),
+    group:
+        "gridparam"
+    params:
+        field_type=lambda w: gridcell_field_list.loc[w.gridcell_field, "type"],
+        resolution=16,
+    envmodules:
+        "grassgis",
+        "r-env",
+    script:
+        "../scripts/rasterize_xyz.R"
