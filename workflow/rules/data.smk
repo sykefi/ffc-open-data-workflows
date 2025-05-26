@@ -9,12 +9,8 @@ localrules:
 
 rule download_grid_region:
     input:
-        lambda w: (
-            []
-            if exists(
-                f"resources/aineistot/Historia/Hila/{w.day}_{w.month}_{w.year}/Maakunta/Hila_{w.region}.zip"
-            )
-            else storage.http(
+        lambda w: ancient(
+            storage.http(
                 f"{SMK_DATA_ROOT_URL}/Historia/Hila/{w.day}_{w.month}_{w.year}/Maakunta/Hila_{w.region}.zip"
             )
         ),
