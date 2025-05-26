@@ -4,6 +4,7 @@ storage:
 
 localrules:
     download_grid_region,
+    unpack_grid_region,
 
 
 rule download_grid_region:
@@ -25,3 +26,14 @@ rule download_grid_region:
         "Download grid data for {wildcards.region} ({wildcards.year}-{wildcards.month}-{wildcards.day})."
     shell:
         "cp {input:q} {output:q}"
+
+
+rule unpack_grid_region:
+    input:
+        rules.download_grid_region.output[0],
+    output:
+        temp(rules.download_grid_region.output[0].replace(".zip", ".gpkg")),
+    params:
+        dirname=lambda w, output: dirname(output[0]),
+    shell:
+        "unzip -d {params.dirname:q} -j {input:q}"
