@@ -1,0 +1,6 @@
+include: "rules/definitions.smk"
+include: "rules/data.smk"
+
+
+rule all:
+    default_target: True

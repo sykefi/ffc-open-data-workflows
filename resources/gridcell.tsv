@@ -1,0 +1,42 @@
+field	type	lower_limit	upper_limit
+maingroup	category	1	10
+subgroup	category	1	5
+fertilityclass	category	1	8
+soiltype	category	10	80
+drainagestate	category	1	9
+ditchingyear	integer	1500	
+harvestaccessibility	category	1	6
+growthplacedatasource	category	1	5
+growthplacedate	date		
+developmentclass	category		
+maintreespecies	category	1	30
+laserheight	real	0	
+laserdensity	real	0	
+treedatadate	date		
+agepine	integer	0	
+basalareapine	real	0	
+stemcountpine	integer	0	
+meandiameterpine	real	0	
+meanheightpine	real	0	
+volumepine	real	0	
+agespruce	integer	0	
+basalareaspruce	real	0	
+stemcountspruce	integer	0	
+meandiameterspruce	real	0	
+meanheightspruce	real	0	
+volumespruce	real	0	
+agedeciduous	integer	0	
+basalareadeciduous	real	0	
+stemcountdeciduous	integer	0	
+meandiameterdeciduous	real	0	
+meanheightdeciduous	real	0	
+volumedeciduous	real	0	
+age	integer	0	
+basalarea	real	0	
+stemcount	integer	0	
+meandiameter	real	0	
+meanheight	real	0	
+dominantheight	real	0	
+volume	real	0	
+creationtime	date		
+updatetime	date		
