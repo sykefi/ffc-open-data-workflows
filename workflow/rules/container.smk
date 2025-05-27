@@ -1,5 +1,6 @@
 localrules:
-    build_container
+    build_container,
+
 
 rule build_container:
     input:

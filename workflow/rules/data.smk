@@ -5,10 +5,6 @@ storage:
 localrules:
     download_grid_region,
     unpack_grid_region,
-    extract_grid_param_xyz,
-    extract_grid_date_xyz,
-    extract_developmentclass_xyz,
-    rasterize_xyz,
 
 
 rule download_grid_region:
@@ -173,6 +169,26 @@ rule rasterize_xyz:
         field_type=lambda w: gridcell_field_list.loc[w.gridcell_field, "type"],
         resolution=16,
     container:
-        "container.sif",
+        "container.sif"
     script:
         "../scripts/rasterize_xyz.R"
+
+
+rule patch_raster:
+    input:
+        expand(
+            rules.rasterize_xyz.output[0]
+            .replace("{gridcell_field}", "{{gridcell_field}}")
+            .replace("{year}-{month}-{day}", "{{year}}-{{month}}-{{day}}"),
+            region=region_list,
+        ),
+    output:
+        "results/gridcell/{year}-{month}-{day}/{gridcell_field}.tif",
+    group:
+        "gridparam"
+    params:
+        field_type=lambda w: gridcell_field_list.loc[w.gridcell_field, "type"],
+    container:
+        "container.sif"
+    script:
+        "../scripts/patch_raster.R"
