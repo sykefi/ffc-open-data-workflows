@@ -163,7 +163,8 @@ rule extract_developmentclass_xyz:
 
 rule rasterize_xyz:
     input:
-        rules.extract_grid_param_xyz.output[0],
+        raster=rules.extract_grid_param_xyz.output[0],
+        container=ancient(rules.build_container.output[0]),
     output:
         temp(rules.extract_grid_param_xyz.output[0].replace(".xyz", ".tif")),
     group:
@@ -171,8 +172,7 @@ rule rasterize_xyz:
     params:
         field_type=lambda w: gridcell_field_list.loc[w.gridcell_field, "type"],
         resolution=16,
-    envmodules:
-        "grassgis",
-        "r-env",
+    container:
+        "container.sif",
     script:
         "../scripts/rasterize_xyz.R"

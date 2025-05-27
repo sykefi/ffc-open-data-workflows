@@ -1,17 +1,10 @@
-if(nzchar(Sys.getenv("SLURM_JOB_ACCOUNT"))) {
-    libpath <- paste0("/projappl/", Sys.getenv("SLURM_JOB_ACCOUNT"), "/project_rpackages_", gsub("\\.", "", getRversion()))
-    .libPaths(libpath)
-    gisbase <- "/usr/local/grass"
-} else {
-    gisbase <- system2("grass", args = c("--config", "path"), stdout = TRUE)
-}
-
 library("rgrass")
 
+gisbase <- system2("grass", args = c("--config", "path"), stdout = TRUE)
 template <- terra::rast(matrix(), crs = "epsg:3067")
 invisible(initGRASS(gisBase = gisbase, home = tempdir(), SG = template))
 
-input_xyz <- snakemake@input[[1]]
+input_xyz <- snakemake@input[["raster"]]
 output_field <- snakemake@wildcards[["gridcell_field"]]
 
 field_type <- snakemake@params[["field_type"]]

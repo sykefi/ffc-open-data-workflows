@@ -1,0 +1,11 @@
+Bootstrap: docker
+From: debian:bookworm
+
+%post
+    apt update
+    apt install  --no-install-recommends -y grass-dev grass-core r-cran-terra r-cran-xml2 r-cran-rlang r-cran-codetools r-cran-cli
+    Rscript -e 'install.packages("rgrass")'
+
+%environment
+    export R_LIBS_SITE=/usr/local/lib/R/site-library/:/usr/lib/R/site-library:/usr/lib/R/library
+    export LC_ALL=C.UTF-8
