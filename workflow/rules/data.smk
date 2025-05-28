@@ -3,11 +3,10 @@ storage:
 
 
 localrules:
-    download_grid_region,
     unpack_grid_region,
 
 
-rule download_grid_region:
+rule unpack_grid_region:
     input:
         lambda w: ancient(
             storage.http(
@@ -15,24 +14,13 @@ rule download_grid_region:
             )
         ),
     output:
-        protected(
-            "resources/aineistot/Historia/Hila/{day}_{month}_{year}/Maakunta/Hila_{region}.zip"
+        temp(
+            "resources/aineistot/Historia/Hila/{day}_{month}_{year}/Maakunta/Hila_{region}.gpkg"
         ),
-    message:
-        "Download grid data for {wildcards.region} ({wildcards.year}-{wildcards.month}-{wildcards.day})."
-    shell:
-        "cp {input:q} {output:q}"
-
-
-rule unpack_grid_region:
-    input:
-        rules.download_grid_region.output[0],
-    output:
-        temp(rules.download_grid_region.output[0].replace(".zip", ".gpkg")),
     params:
         dirname=lambda w, output: dirname(output[0]),
     shell:
-        "unzip -d {params.dirname:q} -j {input:q}"
+        "unzip -p {input:q} > {output:q}"
 
 
 rule extract_grid_param_xyz:
