@@ -1,6 +1,8 @@
 include: "rules/definitions.smk"
 include: "rules/container.smk"
 include: "rules/data.smk"
+include: "rules/gridcell.smk"
+include: "rules/target.smk"
 
 
 rule all:

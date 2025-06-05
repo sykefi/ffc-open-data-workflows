@@ -24,3 +24,40 @@ wildcard_constraints:
 
 
 SMK_DATA_ROOT_URL = "https://avoin.metsakeskus.fi/aineistot"
+
+gridcell_tree_variable = [
+    "age",
+    "basalarea",
+    "stemcount",
+    "meandiameter",
+    "meanheight",
+    "dominantheight",
+    "volume",
+]
+
+gridcell_grouping = {
+    "site": [
+        "maingroup",
+        "subgroup",
+        "fertilityclass",
+        "soiltype",
+        "drainagestate",
+        "ditchingyear",
+        "harvestaccessibility",
+        "developmentclass",
+        "maintreespecies",
+    ],
+    "meta": [
+        "growthplacedatasource",
+        "growthplacedate",
+        "laserheight",
+        "laserdensity",
+        "treedatadate",
+        "creationtime",
+        "updatetime",
+    ],
+    "total": gridcell_tree_variable,
+} | {
+    x: [f"{v}{x}" for v in gridcell_tree_variable if v != "dominantheight"]
+    for x in ["pine", "spruce", "deciduous"]
+}
