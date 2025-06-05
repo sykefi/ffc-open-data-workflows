@@ -14,7 +14,7 @@ rule unpack_grid_region:
             )
         ),
     output:
-        temp(
+        protected(
             "resources/aineistot/Historia/Hila/{day}_{month}_{year}/Maakunta/Hila_{region}.gpkg"
         ),
     params:
