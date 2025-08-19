@@ -1,5 +1,5 @@
 storage:
-    provider="http"
+    provider="http",
 
 
 rule unpack_gridcell_region:
