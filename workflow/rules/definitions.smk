@@ -1,5 +1,6 @@
 from os.path import dirname
 from pandas import read_table
+from datetime import date
 
 
 def regex_choice_list(choices):

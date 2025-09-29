@@ -19,6 +19,10 @@ The target of the workflow can be edited by setting the `TARGET` variable inside
 
 The runner-script relies on being located under the `examples/` directory to find the `Snakefile`. While the script handles being called via a symlink, creating a copy in an alternative location will require setting the `SNAKEFILE` variable using different logic such as hardcoding the path to the `Snakefile`.
 
+## Notes
+
+The timestamps of the original `.gpkg` files are lost during unpacking.
+These can be recovered if needed when the original input zipfiles are kept by using the `--keep-storage-local-copies` flag in the calls to `snakemake`.
 
 ## Topics
 
@@ -35,6 +39,12 @@ The layer names are listed under `resources/gridcell.tsv` and are documented by 
 ### Stand data
 
 Workflow for combining stand data from regions and working with overlapping and duplicate stand polygons.
+
+
+### Kemera data
+
+
+### Forest use declarations
 
 
 ## Snakemake workflow structure

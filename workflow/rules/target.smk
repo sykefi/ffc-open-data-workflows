@@ -28,6 +28,40 @@ rule target_stand_download:
         "touch {output:q}"
 
 
+rule target_kemera_download:
+    input:
+        lambda w: expand(
+            rules.unpack_kemera_region.output[0],
+            region=region_list,
+            year=date.today().year,
+            month=str(date.today().month).zfill(2),
+            day=str(date.today().day).zfill(2),
+        ),
+    output:
+        "results/target/kemera/download/{year}-{month:02d}-{day:02d}.lst".format(
+            day=date.today().day, month=date.today().month, year=date.today().year
+        ),
+    shell:
+        "touch {output:q}"
+
+
+rule target_forest_use_declaration_download:
+    input:
+        lambda w: expand(
+            rules.unpack_forest_use_declaration_region.output[0],
+            region=region_list,
+            year=date.today().year,
+            month=str(date.today().month).zfill(2),
+            day=str(date.today().day).zfill(2),
+        ),
+    output:
+        "results/target/forest_use_declaration/download/{year}-{month:02d}-{day:02d}.lst".format(
+            day=date.today().day, month=date.today().month, year=date.today().year
+        ),
+    shell:
+        "touch {output:q}"
+
+
 rule target_gridcell_variable_group:
     input:
         lambda w: expand(
