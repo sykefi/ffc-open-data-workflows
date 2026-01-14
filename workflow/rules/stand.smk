@@ -36,4 +36,4 @@ rule merge_stand_data:
     output:
         "results/stand/{year}-{month}-{day}/stand.gpkg",
     shell:
-        'for x in {input:q}; do echo "${{x}}"; ogr2ogr -skipfailures -append {output[0]:q} "${{x}}"; done'
+        'for x in {input:q}; do ogr2ogr -skipfailures -append {output[0]:q} "${{x}}"; done'
