@@ -1,10 +1,27 @@
-include: "rules/definitions.smk"
-include: "rules/container.smk"
-include: "rules/data.smk"
-include: "rules/gridcell.smk"
-include: "rules/stand.smk"
-include: "rules/kemera.smk"
-include: "rules/target.smk"
+## Common code and definitions
+
+
+include: "rules/common/container.smk"
+include: "rules/common/functions.smk"
+include: "rules/common/wildcards.smk"
+include: "rules/common/storage.smk"
+
+
+## Gridcell forest variables
+
+
+include: "rules/metadata/gridcell.smk"
+include: "rules/data/gridcell.smk"
+
+
+## Old code
+
+
+include: "rules/definitions_.smk"
+include: "rules/data_.smk"
+include: "rules/stand_.smk"
+include: "rules/forest_use_declaration_.smk"
+include: "rules/kemera_.smk"
 
 
 rule all:

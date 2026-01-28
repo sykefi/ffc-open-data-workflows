@@ -1,0 +1,19 @@
+localrules:
+    build_container,
+
+
+rule build_container:
+    input:
+        definition=lambda w: workflow.source_path(
+            f"../../../resources/container/{w.container}.def"
+        ),
+    output:
+        container=protected("{container}.sif"),
+    wildcard_constraints:
+        container="(?:gdal-3.12|grass-8.5)",
+    shell:
+        "apptainer build"
+        " --fakeroot"
+        " --bind={resources.tmpdir}:/tmp"
+        " {output.container:q}"
+        " {input.definition:q}"

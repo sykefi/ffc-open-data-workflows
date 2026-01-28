@@ -1,0 +1,17 @@
+Bootstrap: docker
+From: debian:forky
+
+%post
+export DEBIAN_FRONTEND=noninteractive
+    apt update && \
+    apt upgrade -y && \
+    apt install -y --no-install-recommends --no-install-suggests \
+    ca-certificates \
+    gdal-bin \
+    proj-bin && \
+    apt clean && rm -rf /var/lib/apt/lists/*
+
+    projsync --system-directory --source-id fi_nls
+
+%environment
+    export LC_ALL=C.UTF-8

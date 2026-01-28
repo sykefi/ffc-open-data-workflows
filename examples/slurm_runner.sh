@@ -6,7 +6,7 @@
 #SBATCH --gres=nvme:40
 #SBATCH --partition=small
 
-TARGET=results/target/gridcell/all/2021-03-29.lst
+TARGET=results/gridcell/2021-03-29/maingroup.tif
 
 SCRIPT_DIR=$(scontrol show job "$SLURM_JOB_ID" | awk -F= '/Command=/{print $2}')
 RUNNER_DIR="$(dirname "$(readlink -f "${SCRIPT_DIR}")")"
@@ -22,8 +22,7 @@ snakemake --keep-going \
 	--cores ${SLURM_CPUS_PER_TASK} \
 	 -s "${SNAKEFILE}" \
 	--directory ${WORKDIR} \
-	--use-apptainer \
+	--sdm apptainer \
 	--apptainer-args "--bind ${LOCAL_SCRATCH}:${LOCAL_SCRATCH}" \
-	--use-envmodules \
 	--default-resources tmpdir=\"${LOCAL_SCRATCH}\" \
 	-- ${TARGET}

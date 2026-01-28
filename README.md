@@ -6,11 +6,15 @@
 
 The workflows are structured using [Snakemake](https://snakemake.github.io/).
 
-For processing on a suitable HPC-cluster there is an [apptainer](https://apptainer.org/) (singularity) container directive that would provide a suitable environment for executing the workflows. Currently the geoprocessing utilizes [GRASS GIS](https://grass.osgeo.org/) driven via R-scripts.
+Currently the geoprocessing utilizes modern [GDAL](https://gdal.org/) (>= 3.11) and [GRASS GIS](https://grass.osgeo.org/) (>= 8.5) driven via Python scripts.
 
-Additional utilities used in the workflows include [csvkit](https://csvkit.readthedocs.io/), [GDAL tools](https://gdal.org/en/stable/programs/index.html), and [miller](https://miller.readthedocs.io/).
+Additional utilities used in the workflows include [csvkit](https://csvkit.readthedocs.io/) and [miller](https://miller.readthedocs.io/).
+
+### Running using snakedeploy
 
 ### Running on CSC-clusters
+
+For processing on a suitable HPC-cluster there are [apptainer](https://apptainer.org/) (singularity) container directives that will provide a suitable environment for executing the workflows. These should be executed before running the actual workflow.
 
 The `examples/` contains a template SLURM batch job script that can be used to run the workflow on [Puhti](https://docs.csc.fi/computing/systems-puhti/).
 The `sbatch` has to provide the project used via hte `--account` flag and the script log output targets can be changed with the `--output` and `--error` flags.
@@ -30,11 +34,10 @@ These can be recovered if needed when the original input zipfiles are kept by us
 
 The gridcell data provided by the Finnish Forest Centre are distributed as vector tiles in Geopackages.
 This workflow allows automating the creation of Finland-wide rasters from the vector files.
-Processing of the full data set at once for one time point requires almost 1 Tb of free disk space.
-
-A meta target for generating most layers associated with one archived version of the gridcell data is: `results/target/gridcell/all/{year}-{month}-{day}.lst` which will generate corresponding raster files under `results/gridcell/{year}-{month}-{day}/{gridcell_field}.tif` where `{gridcell_field}` is the name of a layer included in the data and `{year}`, `{month}`, `{day}` correspond to a data release date by the Finnish Forest Centre.
+Processing of the full data set at once for one time point can require over 1 Tb of free disk space.
 
 The layer names are listed under `resources/gridcell.tsv` and are documented by the Finnish Forest Centre.
+
 
 ### Stand data
 
@@ -51,20 +54,24 @@ Workflow for combining stand data from regions and working with overlapping and 
 
 The main Snakefile `workflow/Snakefile` only collects the rules which are written in files under `workflow/rules/`.
 
-`definitions.smk`
-: This file contains helper functions and construct the lists of variables in the data and the region divisions.
+### Common rules and code
 
-`container.smk`
-: This file contains a rule to build the apptainer container for running the workflow rules depending on GRASS GIS and R on a HPC cluster.
+`common/container.smk`
+: Rule to generate apptainer containers.
 
-`data.smk`
-: This file contains rules to download the Finnish Forest Centre open data used by the workflows.
+`common/functions.smk`
+: Provides functions used by the rules.
 
-`gridcell.smk`
-: This file contains the rules for processing the gridcell vector files and converting them to rasters.
+`common/wildcards.smk`
+: Provides wildcard definitions and list of regions.
 
-`stand.smk`
-: This file contains rules for summarizing duplicate stands and for merging stand data for the whole of Finland.
+`common/storage.smk`
+: Provides input functions for rules for data provided by the Finnish Forest Centre.
 
-`target.smk`
-: This file contains meta rules for downloading a full data set and for performing conversion operations for a full data set using rules defined in the preceding files.
+### Dataset specific rules and definitions
+
+`metadata/{gridcell}.smk`
+: Provides definitions and metadata for the data processing rules.
+
+`data/{gridcell}.smk`
+: Rules to acquire and process Finnish Forest Centre data.
