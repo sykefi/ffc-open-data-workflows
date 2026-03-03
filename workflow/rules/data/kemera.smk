@@ -7,6 +7,10 @@ rule timestamp_kemera_region:
                 day=date.today().day, month=date.today().month, year=date.today().year
             )
         ),
+    envmodules:
+        "StdEnv",
+    container:
+        "base-env.sif"
     shell:
         "cp -p {input:q} {output:q}"
 
@@ -16,6 +20,10 @@ rule unpack_kemera_region:
         ancient(rules.timestamp_kemera_region.output[0]),
     output:
         temp(rules.timestamp_kemera_region.output[0].replace(".zip", ".gpkg")),
+    envmodules:
+        "StdEnv",
+    container:
+        "base-env.sif"
     shell:
         "unzip -p {input:q} > {output:q}"
 
@@ -34,7 +42,7 @@ rule merge_kemera_data:
         "gdal vector concat"
         " --source-layer-field-name 'source_dataset'"
         " --source-layer-field-content '{{DS_BASENAME}}'"
-        " {input:q} {output[0]:q}"
+        " {input:q} {output:q}"
 
 
 rule merge_kemera_data_layers:
@@ -53,7 +61,7 @@ rule merge_kemera_data_layers:
         geometry=lookup(dpath="/{geometry}", within=kemera_geometry_type),
     shell:
         "gdal vector pipeline --quiet"
-        " ! read {input[0]:q}"
+        " ! read {input:q}"
         " ! sql --output-layer {params.layer} --sql {params.sql:q}"
         " ! set-geom-type --geometry-type {params.geometry}"
-        " ! write {output[0]:q}"
+        " ! write {output:q}"

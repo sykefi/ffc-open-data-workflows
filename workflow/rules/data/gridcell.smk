@@ -5,6 +5,10 @@ rule unpack_gridcell_region:
         temp(
             "<resources>/aineistot/Historia/Hila/{day}_{month}_{year}/Maakunta/Hila_{region}.gpkg"
         ),
+    envmodules:
+        "StdEnv",
+    container:
+        "base-env.sif"
     shell:
         "unzip -p {input:q} > {output:q}"
 
@@ -22,10 +26,10 @@ rule extract_gridcell_param_xyz:
         sql=gridcell_param_sql,
     shell:
         "gdal vector pipeline"
-        " ! read {input[0]:q}"
+        " ! read {input:q}"
         " ! sql --sql {params.sql:q}"
         " ! write -f CSV --lco SEPARATOR=tab /vsistdout/"
-        " > {output[0]:q}"
+        " > {output:q}"
 
 
 use rule extract_gridcell_param_xyz as extract_gridcell_date_xyz with:

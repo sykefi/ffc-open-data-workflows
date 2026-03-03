@@ -3,9 +3,9 @@ From: debian:forky
 
 %post
     export DEBIAN_FRONTEND=noninteractive
-    apt update && \
-    apt upgrade -y && \
-    apt install -y --no-install-recommends --no-install-suggests \
+    apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends --no-install-suggests \
     bison \
     build-essential \
     bzip2 \
@@ -68,7 +68,7 @@ From: debian:forky
     wget \
     zip \
     zlib1g-dev \
-    && apt clean
+    && apt-get clean
 
     wget --output-document=grass-source.zip https://github.com/OSGeo/grass/archive/bb952f0fd0c8275f41aed5ce18038e260585eea4.zip
     unzip grass-source.zip && rm grass-source.zip && mv grass-*/ grass-source && cd grass-source/

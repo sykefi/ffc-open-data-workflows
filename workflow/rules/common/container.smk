@@ -10,9 +10,13 @@ rule build_container:
     output:
         container=protected("{container}.sif"),
     wildcard_constraints:
-        container="(?:gdal-3.12|grass-8.5)",
+        container="(?:gdal-3.12|grass-8.5|base-env)",
+    conda:
+        "../../envs/apptainer.yaml"
+    envmodules:
+        "StdEnv",
     shell:
-        "apptainer build"
+        "apptainer --silent build"
         " --fakeroot"
         " --bind={resources.tmpdir}:/tmp"
         " {output.container:q}"

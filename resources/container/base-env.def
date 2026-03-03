@@ -1,17 +1,13 @@
 Bootstrap: docker
-From: debian:forky
+From: debian:trixie
 
 %post
 export DEBIAN_FRONTEND=noninteractive
     apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends --no-install-suggests \
-    ca-certificates \
-    gdal-bin \
-    proj-bin && \
+    unzip
     apt-get clean && rm -rf /var/lib/apt/lists/*
-
-    projsync --system-directory --source-id fi_nls
 
 %environment
     export LC_ALL=C.UTF-8

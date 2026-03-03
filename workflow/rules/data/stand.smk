@@ -5,6 +5,10 @@ rule unpack_stand_region:
         temp(
             "<resources>/aineistot/Historia/Metsavarakuviot/{day}_{month}_{year}/Maakunta/MV_{region}.gpkg"
         ),
+    envmodules:
+        "StdEnv",
+    container:
+        "base-env.sif"
     shell:
         "unzip -p {input:q} > {output:q}"
 
@@ -21,9 +25,9 @@ rule stand_data:
         sql=lambda w: f"SELECT * FROM {w.stand_layer}",
     shell:
         "gdal vector pipeline --quiet"
-        " ! read {input[0]:q}"
+        " ! read {input:q}"
         " ! sql -l {params.layer} --sql {params.sql:q}"
-        " ! write {output[0]:q}"
+        " ! write {output:q}"
 
 
 rule merge_stand_layer_data:
@@ -44,7 +48,7 @@ rule merge_stand_layer_data:
         " ! concat --source-layer-field-name source_dataset --source-layer-field-content {{DS_BASENAME}} {input:q}"
         " ! sql --dialect SQLITE -l {params.layer} --sql {params.sql:q}"
         " ! select --exclude --fields row_number"
-        " ! write {output[0]:q}"
+        " ! write {output:q}"
 
 
 rule merge_stand_data:
@@ -58,4 +62,4 @@ rule merge_stand_data:
     container:
         "gdal-3.12.sif"
     shell:
-        "gdal vector concat --quiet --mode stack {input:q} {output[0]:q}"
+        "gdal vector concat --quiet --mode stack {input:q} {output:q}"

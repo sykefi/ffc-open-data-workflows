@@ -7,6 +7,10 @@ rule timestamp_forest_use_declaration_region:
                 day=date.today().day, month=date.today().month, year=date.today().year
             )
         ),
+    envmodules:
+        "StdEnv",
+    container:
+        "base-env.sif"
     shell:
         "cp -p {input:q} {output:q}"
 
@@ -20,6 +24,10 @@ rule unpack_forest_use_declaration_region:
                 ".zip", ".gpkg"
             )
         ),
+    envmodules:
+        "StdEnv",
+    container:
+        "base-env.sif"
     shell:
         "unzip -p {input:q} > {output:q}"
 
@@ -38,9 +46,9 @@ rule forest_use_declaration_data:
         sql="SELECT * FROM forestusedeclaration",
     shell:
         "gdal vector pipeline --quiet"
-        " ! read {input[0]:q}"
+        " ! read {input:q}"
         " ! sql -l {params.layer} --sql {params.sql:q}"
-        " ! write {output[0]:q}"
+        " ! write {output:q}"
 
 
 rule merge_forest_use_declaration_data:
@@ -61,4 +69,4 @@ rule merge_forest_use_declaration_data:
         " ! concat --source-layer-field-name source_dataset --source-layer-field-content {{DS_BASENAME}} {input:q}"
         " ! sql --dialect SQLITE -l {params.layer} --sql {params.sql:q}"
         " ! select --exclude --fields row_number"
-        " ! write {output[0]:q}"
+        " ! write {output:q}"
