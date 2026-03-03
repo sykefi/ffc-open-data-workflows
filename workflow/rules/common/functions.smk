@@ -1,3 +1,4 @@
+from datetime import date
 from pandas import read_table
 
 

@@ -8,7 +8,6 @@ The workflows are structured using [Snakemake](https://snakemake.github.io/).
 
 Currently the geoprocessing utilizes modern [GDAL](https://gdal.org/) (>= 3.11) and [GRASS GIS](https://grass.osgeo.org/) (>= 8.5) driven via Python scripts.
 
-Additional utilities used in the workflows include [csvkit](https://csvkit.readthedocs.io/) and [miller](https://miller.readthedocs.io/).
 
 ### Running using snakedeploy
 
@@ -23,10 +22,12 @@ The target of the workflow can be edited by setting the `TARGET` variable inside
 
 The runner-script relies on being located under the `examples/` directory to find the `Snakefile`. While the script handles being called via a symlink, creating a copy in an alternative location will require setting the `SNAKEFILE` variable using different logic such as hardcoding the path to the `Snakefile`.
 
+
 ## Notes
 
 The timestamps of the original `.gpkg` files are lost during unpacking.
 These can be recovered if needed when the original input zipfiles are kept by using the `--keep-storage-local-copies` flag in the calls to `snakemake`.
+
 
 ## Topics
 
@@ -39,20 +40,26 @@ Processing of the full data set at once for one time point can require over 1 Tb
 The layer names are listed under `resources/gridcell.tsv` and are documented by the Finnish Forest Centre.
 
 
-### Stand data
-
-Workflow for combining stand data from regions and working with overlapping and duplicate stand polygons.
-
-
 ### Kemera data
+
+The per-region data are merged into one dataset and layers containing the same geometry type are merged together.
 
 
 ### Forest use declarations
+
+The per-region data are merged into one dataset.
+
+
+### Stand data
+
+The per-region data are merged into one dataset.
+
 
 
 ## Snakemake workflow structure
 
 The main Snakefile `workflow/Snakefile` only collects the rules which are written in files under `workflow/rules/`.
+
 
 ### Common rules and code
 
@@ -68,10 +75,11 @@ The main Snakefile `workflow/Snakefile` only collects the rules which are writte
 `common/storage.smk`
 : Provides input functions for rules for data provided by the Finnish Forest Centre.
 
-### Dataset specific rules and definitions
 
-`metadata/{gridcell}.smk`
-: Provides definitions and metadata for the data processing rules.
+### Per-dataset rules and definitions
 
-`data/{gridcell}.smk`
+`metadata/{gridcell,kemera,stand}.smk`
+: Provides definitions and functions for the data processing rules.
+
+`data/{gridcell,kemera,forest_use_declaration,stand}.smk`
 : Rules to acquire and process Finnish Forest Centre data.

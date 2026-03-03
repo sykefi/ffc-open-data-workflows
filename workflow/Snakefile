@@ -1,3 +1,8 @@
+from snakemake.utils import min_version
+
+min_version("9.12.0")
+
+
 ## Common code and definitions
 
 
@@ -14,14 +19,24 @@ include: "rules/metadata/gridcell.smk"
 include: "rules/data/gridcell.smk"
 
 
-## Old code
+## Kemera and Metka declarations
 
 
-include: "rules/definitions_.smk"
-include: "rules/data_.smk"
-include: "rules/stand_.smk"
-include: "rules/forest_use_declaration_.smk"
-include: "rules/kemera_.smk"
+include: "rules/metadata/kemera.smk"
+include: "rules/data/kemera.smk"
+
+
+## Forest use declaration
+
+
+include: "rules/data/forest_use_declaration.smk"
+
+
+## Forest stands
+
+
+include: "rules/metadata/stand.smk"
+include: "rules/data/stand.smk"
 
 
 rule all:

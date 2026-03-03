@@ -16,12 +16,10 @@ rule extract_gridcell_param_xyz:
         temp("<results>/gridcell/{year}-{month}-{day}/{gridcell_field}/{region}.xyz"),
     wildcard_constraints:
         gridcell_field=regex_choice_list(gridcell_param_field),
-    params:
-        sql=gridcell_param_sql,
     container:
         "gdal-3.12.sif"
-    envmodules:
-        "geoconda",
+    params:
+        sql=gridcell_param_sql,
     shell:
         "gdal vector pipeline"
         " ! read {input[0]:q}"

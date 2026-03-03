@@ -1,21 +1,11 @@
-rule merge_kemera_data:
-    input:
-        ancient(
-            lambda w: expand(
-                "resources/aineistot/Kemera/{day}_{month}_{year}/Maakunta/Kemera_{region}.gpkg",
-                region=region_list,
-                year=w.year,
-                month=w.month,
-                day=w.day,
-            )
-        ),
-    output:
-        "results/kemera/{year}-{month}-{day}/kemera.gpkg",
-    shell:
-        'for x in {input:q}; do ogr2ogr -append {output[0]:q} "${{x}}"; done'
+kemera_geometry_type = {
+    "stand": "MultiPolygon",
+    "line": "MultiLineString",
+    "point": "MultiPoint",
+}
 
 
-def kemera_query_sql(wildcards):
+def kemera_param_sql(wildcards):
     dt = wildcards.declarationtype
     geom = wildcards.geometry
 
@@ -39,7 +29,7 @@ def kemera_query_sql(wildcards):
 
     layer_queries = []
 
-    base_columns = ["fid AS layer_id", "geometry", "workcode"]
+    base_columns = ["geometry", "workcode", "source_dataset"]
 
     if geom == "stand":
         base_columns += ["standnumber"]
@@ -78,31 +68,4 @@ def kemera_query_sql(wildcards):
         layer_queries += [f"SELECT {', '.join(columns)} FROM {layer}"]
 
     sql = " UNION ALL ".join(layer_queries)
-
     return sql
-
-
-rule merge_kemera_data_layers:
-    input:
-        rules.merge_kemera_data.output[0],
-    output:
-        "results/kemera/{year}-{month}-{day}/kemera/{declarationtype}_{geometry}.gpkg",
-    wildcard_constraints:
-        declarationtype="(?:application|completiondeclaration)",
-        geometry="(?:stand|line|point)",
-    params:
-        sql=kemera_query_sql,
-        layer=lambda w: f"{w.declarationtype}_{w.geometry}",
-        geometry=lambda w: {
-            "stand": "MultiPolygon",
-            "line": "MultiLineString",
-            "point": "MultiPoint",
-        }[w.geometry],
-    shell:
-        "ogr2ogr "
-        " -unsetFid"
-        " {output[0]:q}"
-        " {input[0]:q}"
-        " -sql {params.sql:q}"
-        " -nln {params.layer}"
-        " -nlt PROMOTE_TO_MULTI -nlt {params.geometry}"
