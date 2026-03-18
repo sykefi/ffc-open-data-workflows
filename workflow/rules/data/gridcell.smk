@@ -5,12 +5,14 @@ rule unpack_gridcell_region:
         temp(
             "<resources>/aineistot/Historia/Hila/{day}_{month}_{year}/Maakunta/Hila_{region}.gpkg"
         ),
+    log:
+        "<logs>/unpack_gridcell_region/{year}-{month}-{day}/{region}.log",
     envmodules:
         "StdEnv",
     container:
         "base-env.sif"
     shell:
-        "unzip -p {input:q} > {output:q}"
+        "unzip -p {input:q} > {output:q} 2> {log:q}"
 
 
 rule extract_gridcell_param_xyz:
@@ -18,6 +20,8 @@ rule extract_gridcell_param_xyz:
         rules.unpack_gridcell_region.output[0],
     output:
         temp("<results>/gridcell/{year}-{month}-{day}/{gridcell_field}/{region}.xyz"),
+    log:
+        "<logs>/extract_gridcell_param_xyz/{year}-{month}-{day}/{gridcell_field}/{region}.log",
     wildcard_constraints:
         gridcell_field=regex_choice_list(gridcell_param_field),
     container:
@@ -30,6 +34,7 @@ rule extract_gridcell_param_xyz:
         " ! sql --sql {params.sql:q}"
         " ! write -f CSV --lco SEPARATOR=tab /vsistdout/"
         " > {output:q}"
+        " 2> {log:q}"
 
 
 use rule extract_gridcell_param_xyz as extract_gridcell_date_xyz with:
@@ -51,6 +56,8 @@ rule rasterize_gridcell_xyz:
         xyz=rules.extract_gridcell_param_xyz.output[0],
     output:
         temp(rules.extract_gridcell_param_xyz.output[0].replace(".xyz", ".tif")),
+    log:
+        "<logs>/rasterize_gridcell_xyz/{year}-{month}-{day}/{gridcell_field}/{region}.log",
     container:
         "grass-8.5.sif"
     params:
@@ -75,6 +82,8 @@ rule patch_gridcell_raster:
         ),
     output:
         "<results>/gridcell/{year}-{month}-{day}/{gridcell_field}.tif",
+    log:
+        "<logs>/patch_gridcell_raster/{year}-{month}-{day}/{gridcell_field}.log",
     container:
         "grass-8.5.sif"
     params:

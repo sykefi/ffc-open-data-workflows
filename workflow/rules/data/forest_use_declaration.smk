@@ -7,12 +7,16 @@ rule timestamp_forest_use_declaration_region:
                 day=date.today().day, month=date.today().month, year=date.today().year
             )
         ),
+    log:
+        "<logs>/timestamp_forest_use_declaration_region/{{region}}_{year:04d}-{month:02d}-{day:02d}.log".format(
+            day=date.today().day, month=date.today().month, year=date.today().year
+        ),
     envmodules:
         "StdEnv",
     container:
         "base-env.sif"
     shell:
-        "cp -p {input:q} {output:q}"
+        "cp -p {input:q} {output:q} > {log:q} 2>&1"
 
 
 rule unpack_forest_use_declaration_region:
@@ -24,12 +28,16 @@ rule unpack_forest_use_declaration_region:
                 ".zip", ".gpkg"
             )
         ),
+    log:
+        "<logs>/unpack_forest_use_declaration_region/{{region}}_{year:04d}-{month:02d}-{day:02d}.log".format(
+            day=date.today().day, month=date.today().month, year=date.today().year
+        ),
     envmodules:
         "StdEnv",
     container:
         "base-env.sif"
     shell:
-        "unzip -p {input:q} > {output:q}"
+        "unzip -p {input:q} > {output:q} 2> {log:q}"
 
 
 rule forest_use_declaration_data:
@@ -39,6 +47,8 @@ rule forest_use_declaration_data:
         temp(
             "<results>/forest_use_declaration/{year}-{month}-{day}/forest_use_declaration/{region}.gpkg"
         ),
+    log:
+        "<logs>/forest_use_declaration_data/{year}-{month}-{day}/{region}.log",
     container:
         "gdal-3.12.sif"
     params:
@@ -49,6 +59,7 @@ rule forest_use_declaration_data:
         " ! read {input:q}"
         " ! sql -l {params.layer} --sql {params.sql:q}"
         " ! write {output:q}"
+        " > {log:q} 2>&1"
 
 
 rule merge_forest_use_declaration_data:
@@ -59,6 +70,8 @@ rule merge_forest_use_declaration_data:
         ),
     output:
         "<results>/forest_use_declaration/{year}-{month}-{day}/forest_use_declaration.gpkg",
+    log:
+        "<logs>/merge_forest_use_declaration_data/{year}-{month}-{day}.log",
     container:
         "gdal-3.12.sif"
     params:
@@ -70,3 +83,4 @@ rule merge_forest_use_declaration_data:
         " ! sql --dialect SQLITE -l {params.layer} --sql {params.sql:q}"
         " ! select --exclude --fields row_number"
         " ! write {output:q}"
+        " > {log:q} 2>&1"

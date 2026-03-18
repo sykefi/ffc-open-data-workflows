@@ -1,10 +1,16 @@
-from snakemake.script import snakemake
+import typing
+
+if typing.TYPE_CHECKING:
+    from snakemake.script import snakemake
 
 import subprocess
 import sys
 
 from os.path import join
 from tempfile import TemporaryDirectory
+
+sys.stdout = open(snakemake.log[0], "w")
+sys.stderr = sys.stdout
 
 sys.path.append(
     subprocess.check_output(["grass", "--config", "python_path"], text=True).strip()

@@ -9,6 +9,8 @@ rule build_container:
         ),
     output:
         container=protected("{container}.sif"),
+    log:
+        "<logs>/build_container/{container}.log",
     wildcard_constraints:
         container="(?:gdal-3.12|grass-8.5|base-env)",
     conda:
@@ -21,3 +23,4 @@ rule build_container:
         " --bind={resources.tmpdir}:/tmp"
         " {output.container:q}"
         " {input.definition:q}"
+        " > {log:q} 2>&1"
